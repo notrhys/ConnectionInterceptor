@@ -1,0 +1,2 @@
+Premain-Class: me.rhys.agent.Agent
+Agent-Class: me.rhys.agent.Agent
