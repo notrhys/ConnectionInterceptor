@@ -12,6 +12,6 @@ public class Manager {
     private final List<Module> moduleList = new ArrayList<>();
 
     public void setup() {
-        this.moduleList.add(new ConnectionListener());
+        moduleList.add(new ConnectionListener());
     }
 }
