@@ -1,18 +1,17 @@
 package me.rhys.agent.interceptor.api.module;
 
-public class Module implements AgentInterface {
+import lombok.Getter;
 
-    private String name;
+@Getter
+public abstract class Module implements IAgent {
+
+    private final String name;
 
     public Module() {
-        if (getClass().isAnnotationPresent(AgentAnnotation.class)) {
-            AgentAnnotation agentAnnotation = getClass().getAnnotation(AgentAnnotation.class);
-            this.name = agentAnnotation.name();
+        Class<? extends IAgent> clazz = getClass();
+        if (!clazz.isAnnotationPresent(Agent.class)) {
+            throw new RuntimeException(String.format("Class %s is not annotated with @Agent", clazz.getName()));
         }
-    }
-
-    @Override
-    public void onConnection(String host, int port) {
-
+        name = clazz.getDeclaredAnnotation(Agent.class).name();
     }
 }

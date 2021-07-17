@@ -20,10 +20,10 @@ public class Interceptor {
 
         if (agentArguments != null && agentArguments.equalsIgnoreCase("disable")) {
             Logger.warn("Any connections will be blocked.");
-            this.allowConnection = false;
+            allowConnection = false;
         }
 
-        this.customSecurityManager = new CustomSecurityManager();
-        this.manager.setup();
+        customSecurityManager = new CustomSecurityManager();
+        manager.setup();
     }
 }

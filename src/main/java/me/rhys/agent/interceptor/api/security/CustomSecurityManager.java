@@ -9,32 +9,32 @@ import java.security.Permission;
 
 public class CustomSecurityManager extends SecurityManager {
 
+    private final Interceptor interceptor = Interceptor.getInstance();
+    private int currentBlocked;
+
     public CustomSecurityManager() {
         System.setSecurityManager(this);
     }
 
-    private int currentBlocked;
-
     @Override
     public void checkConnect(String host, int port, Object context) {
-        this.checkConnect(host, port);
+        checkConnect(host, port);
     }
 
     @Override
     public void checkConnect(String host, int port) {
-         Interceptor.getInstance().getManager().getModuleList()
+         interceptor.getManager().getModuleList()
                .forEach(module -> module.onConnection(host, port));
 
-         if (!Interceptor.getInstance().isAllowConnection()) {
+         if (!interceptor.isAllowConnection()) {
              StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
              StackTraceElement stackTraceElement = stackTraceElements[2];
 
              String clazz = stackTraceElement.getClassName();
              boolean blockConnection = false;
-             boolean isRunningMinecraft = ClassUtil.doesClassExist("org.bukkit.craftbukkit.Main");
 
              //Fixes spigot issues
-             if (isRunningMinecraft) {
+             if (ClassUtil.doesClassExist("org.bukkit.craftbukkit.Main")) {
                  if ((clazz.startsWith("sun.nio") || clazz.startsWith("java.net"))
                          && !clazz.startsWith("java.net.InetAddress")
                          && !clazz.startsWith("sun.nio.ch.SocketChannelImpl") && currentBlocked < 10) {
@@ -57,8 +57,6 @@ public class CustomSecurityManager extends SecurityManager {
 
     @Override
     public void checkPermission(Permission perm) {
-        //
-
         if (perm.getName().equalsIgnoreCase("setSecurityManager")
                 || perm.getName().equalsIgnoreCase("SecurityManager")) {
             System.exit(-1);
@@ -67,11 +65,7 @@ public class CustomSecurityManager extends SecurityManager {
 
     @Override
     public void checkPermission(Permission perm, Object context) {
-        this.checkPermission(perm);
+        checkPermission(perm);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends Throwable> void sneakyThrow(Throwable t) throws T {
-        throw (T) t;
-    }
 }
